@@ -1,0 +1,2 @@
+Loop que pega o background e fica avançando a linha de pixels horizontal(width) e colocando a primeira linha no final
+Sprite.h mudar nome do metodo setInsertImage , ou set ou insert
