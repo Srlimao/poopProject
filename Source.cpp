@@ -40,6 +40,7 @@ void write(string msg, int x, int y);
 
 int width = 500;
 int height = 500;
+int widthViewportVar = 0;
 int GameState = 0;		//0 menu, 1 go, 2 pause, 3 gameover.
 
 ImageReader* imageReader;
@@ -50,6 +51,82 @@ vector<GameObj*> sceneObjects;
 vector<Layer*> sceneLayers;
 
 Image *viewportStatic;
+FX * fx;
+
+//TODO ARRUMAR ORDEM DAS ASSINATURAS DOS METODOS
+
+
+//MAIN
+
+void init() {
+
+
+
+
+	//start objects. To be changed on the future.	
+	loadObjects();
+	
+	glMatrixMode(GL_PROJECTION);				//change mode to control view
+	glLoadIdentity();
+	gluOrtho2D(0, width, 0, height);
+	glViewport(0, 9, width, height);
+
+
+	glutInitDisplayMode(GLUT_SINGLE | GLUT_RGBA);
+	glutInitWindowSize(width, height);
+	glutInitWindowPosition(0, 0);
+	glutCreateWindow("Poop Squad!");
+
+
+	//call back functions	(events)	
+	glutDisplayFunc(RenderScene);
+	glutReshapeFunc(ChangeSize);
+	glutKeyboardFunc(keyboard);
+	glutMouseFunc(mouse);
+
+	glMatrixMode(GL_MODELVIEW);					//change back mode to objects views
+
+}
+
+int main(int argc, char* argv[]) {
+	glutInit(&argc, argv);
+	init();					//method to start all global variables
+	glutMainLoop();				// inicio do pipe-line OpenGL
+	return 0;
+}
+
+
+
+
+
+
+//========================================
+//METHODS GAME LOGIC:	
+//========================================
+
+
+//menu
+void mainMenu() {
+	//TODO PRESS S TO START, Q TO QUIT, P TO PAUSE, H FOR HINTS - ONLY IN GAME! - (ADD KEY THAT CHANGE GLOBAL STATS TO DISPLAY TEXT AT PLOT [LIKE, DO NOT SHOT YOURSELF!])
+}
+
+
+void writeCommands() {
+	write("Commands:", 20, 100);
+	write("Q: quit", 25, 90);
+	write("D: show 1 at screen", 25, 80);
+	write("F: show 2 at screen", 25, 70);
+	write("S: stop all visualizations", 25, 60);
+	write("R: random image1 100x100", 25, 50);
+	write("T: set random size image1", 25, 40);
+	write("E: random image2 100x100", 25, 30);
+	write("Y: set random size image2", 25, 20);
+	write("Mouse click: move image2" , 25, 10);
+}
+
+
+//set state to 0 and call main menu at renderScene or main?	
+//mouse at state 0!
 
 
 
@@ -59,13 +136,27 @@ Image *viewportStatic;
 //METHODS IMPLEMENTATION:	
 //========================================
 
-void loadImgs() {
+
+//Load and draw images.
+
+
+//TODO UPDATE THE RIGHT IMAGES TO LAYERS AND STUFF
+void loadObjects() {
 	image1 = imageReader->loadImageFile("F:\\ARQUIVOS\\ProcessGraf\\SpaceBG.ptm");
 	image2 = imageReader->loadImageFile("F:\\ARQUIVOS\\ProcessGraf\\Ship.ptm");
 	Layer *layertemp = new Layer(image1);
 	sceneLayers.push_back(layertemp);
+
+	//INNERS
+	//	criar objects, criar sprites, criar imagens
+	//	criar layers, criar imagens
+
+	fx = new FX( //criar nova sprite e criar nova image.)
 }
 	
+
+
+
 void write(string msg, int x, int y) {	//Chamada GLUT para escrita	
 	const char * cstr = msg.c_str();
 	for (int j = 0; j < msg.size(); j++){
@@ -73,6 +164,9 @@ void write(string msg, int x, int y) {	//Chamada GLUT para escrita
 		glutBitmapCharacter(GLUT_BITMAP_HELVETICA_10, (cstr[j]));
 	}
 }
+
+
+
 
 void plotAll(){
 	Image *temp;
@@ -94,7 +188,13 @@ void plotAll(){
 
 		}
 	}*/
+
+	//if(gamestate==0)...
+	//if(h pressed only state==1)...	
 }
+
+
+
 
 void plotImage(Image * overImage){
 	int rgbOver = 0;
@@ -123,45 +223,6 @@ void plotImage(Image * overImage){
 
 
 
-
-//========================================
-//METHODS GAME LOGIC:	
-//========================================
-
-
-//menu
-void mainMenu() {
-
-}
-
-
-void writeCommands() {
-	write("Commands:", 20, 100);
-	write("Q: quit", 25, 90);
-	write("D: show 1 at screen", 25, 80);
-	write("F: show 2 at screen", 25, 70);
-	write("S: stop all visualizations", 25, 60);
-	write("R: random image1 100x100", 25, 50);
-	write("T: set random size image1", 25, 40);
-	write("E: random image2 100x100", 25, 30);
-	write("Y: set random size image2", 25, 20);
-	write("Mouse click: move image2" , 25, 10);
-}
-
-
-//set state to 0 and call main menu at renderScene or main?	
-//mouse at state 0!
-
-
-
-
-
-
-
-
-
-//main, inits, draw img stuff.
-
 void drawImage() {	//TODO, TODOS OS LUGARES QUE WIDTH/HEIGHT USAR INITIAL WIDTH/HEIGHT INVEZ DE 0 E ARRUMAR OS WIDTH HEIGHT.
 	
 	glRasterPos2i(width, height);	//these 2 methods set the start position to draw...
@@ -172,44 +233,6 @@ void drawImage() {	//TODO, TODOS OS LUGARES QUE WIDTH/HEIGHT USAR INITIAL WIDTH/
 
 
 
-//MAIN
-int main(int argc, char* argv[]) {
-	glutInit(&argc, argv);
-	init();					//method to start all global variables
-	glutMainLoop();			// inicio do pipe-line OpenGL
-	
-
-	return 0;
-
-}
-
-void init() {
-	//start objects. To be changed on the future.	
-	// toDraw.push_back(new Sprite());
-	//toDraw.push_back(new Sprite());
-	
-	glMatrixMode(GL_PROJECTION);				//change mode to control view
-	glLoadIdentity();
-	gluOrtho2D(0, width, 0, height);
-	glViewport(width, height, width*2, height*2);
-	loadImgs();
-
-	glutInitDisplayMode(GLUT_SINGLE | GLUT_RGBA);
-	glutInitWindowSize(width, height);
-	glutInitWindowPosition(0, 0);
-	glutCreateWindow("Who am I?");
-
-
-	//call back functions	(events)	
-	glutDisplayFunc(RenderScene);
-	glutReshapeFunc(ChangeSize);
-	glutKeyboardFunc(keyboard);
-	glutMouseFunc(mouse);
-
-	glMatrixMode(GL_MODELVIEW);					//change back mode to objects views
-
-}
-
 
 
 
@@ -217,37 +240,34 @@ void init() {
 
 //EVENT METHODS
 
-void mouse(int button, int state, int x, int y) {	//what happens on mouse clicks
-/*
-	float xx = x / (float)width;		//turn into %
-	float yy = (height - y) / (float)height ;	//fix updown y and turn into %
-	int yyy = height - y;
 
+
+//DO EVENT BACKGROUND GOING HERE. a ideia eh com timer sempre mover o background em velocidade definida da layer. (apenas uma dimensao, a outra eh no movimento do char),
+//movimento infinito! how?
+
+
+//TODO DO METHOD CALL CHANGESTAT(), on it change to active objects and global variable, allowing control of the spaceship.
+
+
+void mouse(int button, int state, int x, int y) {	//what happens on mouse clicks
+
+	int yyy = height - y;
+	
 	//a click :		
 	if(button == GLUT_LEFT_BUTTON && state == GLUT_DOWN){
+		//test output on console:
 		cout << "Mouse Click:" << endl;
 		cout << "\tPosition: " << x << " - " << y << endl;
 		
-		if (x < toDraw[1]->getImage()->getWidth() / 2 && (y) > 500 - toDraw[1]->getImage()->getHeight() / 2){
-			toDraw[1]->setPos(0, height);
-		}
-		else if ((y) > 500 - toDraw[1]->getImage()->getHeight()/2){				//down
-			toDraw[1]->setPos((x - toDraw[1]->getImage()->getWidth() / 2), height);
-		}
-		else if(x<toDraw[1]->getImage()->getWidth()/2){						//left
-			toDraw[1]->setPos(0, (y + toDraw[1]->getImage()->getHeight() / 2));
-		}
-		else if (x > width - toDraw[1]->getImage()->getWidth() / 2){		//right
-			toDraw[1]->setPos(width - toDraw[1]->getImage()->getHeight(), (y + toDraw[1]->getImage()->getHeight() / 2));
-		}
-
-
-
-		else{																//normal
-			toDraw[1]->setPos((x - toDraw[1]->getImage()->getWidth() / 2), (y + toDraw[1]->getImage()->getHeight() / 2));
+	
+		if(GameState == 1){
+			fx.shoot(x, y);
+			for (int i = 0; i < sceneObjects.size(); i++)
+				if(x > sceneObjects(i).getPosX() && x < sceneObjects[i].getSprites().getImage(sceneObjects[i].getActiveFrame()).getWidth())
+					sceneObject(i).hit();
 		}
 	}
-*/
+
 	glutPostRedisplay();	//recall display event
 }
 
@@ -325,10 +345,11 @@ void RenderScene(void) {							//scene render pipeline state
 	//add here method calls that has begin end to draw stuff;	
 
 	drawImage();
-	writeCommands();
 
 	glFlush();
 }
+
+
 
 void ChangeSize(int w, int h) {						//redimensioning window
 	//prevent invalid size error.
@@ -348,6 +369,11 @@ void ChangeSize(int w, int h) {						//redimensioning window
 	glMatrixMode(GL_MODELVIEW);					//change back mode to objects views
 	glLoadIdentity();
 }	
+
+
+
+
+
 
 
 

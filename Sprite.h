@@ -13,7 +13,7 @@ private:
 	//6: movingLeft1, 7: movingLeft2, 8: movingRight1, 9: movingRight2. 10: destroy1, 11: destroy2
 
 public:
-	//void setInsertImage(Image* image, int pos);		//setImage? insertImage? setFrame?
+	void setInsertImage(Image* image, int pos);		//setImage? insertImage? setFrame?
 	Image * getImage(int pos);
 	
 	Sprite();

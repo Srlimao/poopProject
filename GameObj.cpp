@@ -9,8 +9,10 @@ void GameObj::hit()
 {
 	if (hp > 10) {
 		hp--;
-
+		imgPosCounter = 12;
 	}
+	else
+		destroy();
 }
 
 void GameObj::destroy(){
