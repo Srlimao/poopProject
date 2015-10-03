@@ -111,6 +111,7 @@ void loadObjects() {
 	toLoad.push_back(imageReader->loadImageFile("E:\\poopProject\\Sprites\\Shipup.ptm"));
 	shipup = new Sprite(toLoad);
 
+
 	viewportStatic = new Image(width, height);
 	sceneLayers.push_back(new Layer(imageReader->loadImageFile("E:\\poopProject\\Sprites\\SpaceBG.ptm")));
 	sceneObjects.push_back(new GameObj(0, 0, shipup));
