@@ -14,6 +14,7 @@ private:
 	int posX, posY;		//Posição pra alguma coisa? 
 	Image * image;		//Imagem
 	bool status;
+	int cursorY;
 
 public:
 	Layer(Image* image);
@@ -27,5 +28,6 @@ public:
 	void setPosY(int posY);
 	int getTaxaX();
 	int getTaxaY();
+	int getCursorY();
 
 };

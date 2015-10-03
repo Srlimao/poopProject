@@ -45,7 +45,7 @@ void GameObj::left(int screenWidth, int screenHeight){
 	}
 }
 
-void GameObj::right(int screenWidth, int screenHeight) {
+void GameObj::righty(int screenWidth, int screenHeight) {
 	if (posX < screenWidth - 5 - this->getSprite()->getImage(imgPosCounter)->getWidth()) {
 		posX = posX + 5;
 		if (imgPosCounter = 8 || imgPosCounter != 9)
@@ -89,8 +89,6 @@ void GameObj::setPos(int x, int y) {
 
 Sprite * GameObj::getSprite() { return sprites; }
 
-Sprite * GameObj::getSpriteFX() { return spritesFX; }
-
 boolean GameObj::isActive() { return active; }
 
 void GameObj::setActive(boolean b) { active = b; }
@@ -101,14 +99,12 @@ int GameObj::getPos() { return imgPosCounter;  }
 
 
 
-GameObj::GameObj(int posX, int posY, Sprite * sprites, Sprite * spritesFX) {
+GameObj::GameObj(int posX, int posY, Sprite * sprites) {
 	hp = 10;
 	destroyState = 0;
 	active = true;
 	this->posX = posX;
 	this->posY = posY;
-	this->sprites = sprites;
-	this->spritesFX = spritesFX;
 }
 
 GameObj::~GameObj(void){}

@@ -4,7 +4,6 @@
 class GameObj {
 private:
 	Sprite * sprites;
-	Sprite * spritesFX;
 	int imgPosCounter;
 	int posX;
 	int posY;
@@ -20,7 +19,6 @@ public:
 	int getPos();
 	void settingPosCounter(int pos);
 	Sprite* getSprite();
-	Sprite* getSpriteFX();
 	boolean isActive();
 	void setActive(boolean b);
 
@@ -31,10 +29,10 @@ public:
 
 	void idle();
 	void left(int screenWidth, int screenHeight);
-	void right(int screenWidth, int screenHeight);
+	void righty(int screenWidth, int screenHeight);
 	void up(int screenWidth, int screenHeight);
 	void down(int screenWidth, int screenHeight);
 
-	GameObj(int posX, int posY, Sprite * sprites, Sprite * spritesFX);
+	GameObj(int posX, int posY, Sprite * sprites);
 	~GameObj(void);
 };

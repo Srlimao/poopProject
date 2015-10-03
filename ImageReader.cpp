@@ -33,7 +33,7 @@ Image * ImageReader::loadImageFile(string path) {
 	}
 	getline(file, line);
 	int max = stoi(line);
-	image = new Image(w, h,0,0);
+	image = new Image(w, h);
 
 	int i = 0;		//width
 	int j = h - 1;	//height
@@ -67,7 +67,7 @@ Image * ImageReader::loadImageFile(string path) {
 
 Image* ImageReader::subImage(int width, int height, Image* image, int posx, int posy) {
 
-	Image* im = new Image(width, height, 0, 0);
+	Image* im = new Image(width, height);
 
 	int xx = 0;
 	int yy = 0;
@@ -80,8 +80,8 @@ Image* ImageReader::subImage(int width, int height, Image* image, int posx, int 
 	}
 	
 
-	for (int x = xx; x < width && x < image->getWidth(); x++) {
-		for (int y = yy; y < height && y < image->getHeight(); y++) {
+	for (int x = xx; x < width && x < image->getWidth(); x++) {			//changed || to &&
+		for (int y = yy; y < height && y < image->getHeight(); y++) {	//changed || to &&
 			im->setRGB(posx + x, posy + y ,image->getRGB(x, y));
 		}
 	}

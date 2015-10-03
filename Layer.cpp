@@ -12,8 +12,8 @@ Layer::Layer(Image* image)
 	this->status = true;
 	this->taxaX = 1;
 	this->taxaY = 1;
-	this->posX = image->getPosX();
-	this->posY = image->getPosY();
+	this->posX = 0;
+	this->posY = 0;
 }
 
 Layer::~Layer(void)
@@ -58,4 +58,9 @@ int Layer::getTaxaX()
 int Layer::getTaxaY()
 {
 	return taxaY;
+}
+
+int Layer::getCursorY()
+{
+	return cursorY;
 }
