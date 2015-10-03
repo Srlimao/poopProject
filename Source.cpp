@@ -54,6 +54,7 @@ Sprite * effects;
 Image *viewportStatic;
 //FX * fx;
 
+
 /*
 TODO LIST:
 -	read all right imgs
@@ -142,7 +143,6 @@ void plotAll(){
 		}
 		
 	}
-	/*
 	for (int i = 0; i < sceneObjects.size(); i++)
 	{
 		if (sceneObjects[i]->isActive()){
@@ -151,7 +151,7 @@ void plotAll(){
 			plotImage(temp);
 
 		}
-	}*/
+	}
 
 	//if(gamestate==0)...
 	//if(h pressed only state==1)...	
@@ -165,9 +165,9 @@ void plotImage(Image * overImage){
 	int redOver = 0;
 	int alphaOver = 0;
 
-	for (int x = 0; x < sizeof(width); x++)
+	for (int x = 0; x < width && x<overImage->getWidth(); x++)
 	{
-		for (int y = 0; y < sizeof(height); y++)
+		for (int y = 0; y < height && x<overImage->getHeight(); y++)
 		{
 			rgbOver = overImage->getRGB(x, y);
 			blueOver = rgbOver & 255;
