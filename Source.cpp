@@ -27,6 +27,7 @@ int main(int argc, char * argv[]);
 void ChangeSize(int w, int h);
 void RenderScene();
 void plotImage(Image *overImage);
+void plotAll();
 
 void keyboard(unsigned char key, int x, int y);		//call GameObj move methods
 void mouse(int button, int state, int x, int y);	//call GameObj shoot methods (sfx) and main events.	
@@ -40,7 +41,6 @@ void write(string msg, int x, int y);
 
 int width = 500;
 int height = 500;
-int widthViewportVar = 0;
 int GameState = 0;		//0 menu, 1 go, 2 pause, 3 gameover.
 
 ImageReader* imageReader;
@@ -147,7 +147,12 @@ void plotAll(){
 	for (int i = 0; i < sceneObjects.size(); i++)
 	{
 		if (sceneObjects[i]->isActive()){
-			temp = imageReader->subImage(width, height, sceneObjects[i]->getSprite()->getImage(sceneObjects[i]->getPos()), sceneObjects[i]->getX(), sceneObjects[i]->getY());
+			int objY = sceneObjects[i]->getY();
+			int objX = sceneObjects[i]->getX();
+			Sprite * sprite01 = sceneObjects[i]->getSprite();
+			Image * sprImage01 = sprite01->getImage(sceneObjects[i]->getPos());
+
+			temp = imageReader->subImage(width, height, sprImage01, objX, objY);
 
 			plotImage(temp);
 
@@ -371,7 +376,7 @@ void keyboard(unsigned char key, int x, int y) {	//what happens on keyboard pres
 void RenderScene(void) {							//scene render pipeline state
 	glClear(GL_COLOR_BUFFER_BIT);
 	//add here method calls that has begin end to draw stuff;	
-
+	plotAll();
 	drawImage();
 
 	glFlush();

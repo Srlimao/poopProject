@@ -105,6 +105,7 @@ GameObj::GameObj(int posX, int posY, Sprite * sprites) {
 	active = true;
 	this->posX = posX;
 	this->posY = posY;
+	this->sprites = sprites;
 }
 
 GameObj::~GameObj(void){}

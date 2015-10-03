@@ -68,6 +68,11 @@ Image * ImageReader::loadImageFile(string path) {
 Image* ImageReader::subImage(int width, int height, Image* image, int posx, int posy) {
 
 	Image* im = new Image(width, height);
+	for (int i = 0; i < width; i++) {
+		for (int j = 0; j < height; j++) {
+			im->setRGB(i, i, 0);
+		}
+	}
 
 	int xx = 0;
 	int yy = 0;
