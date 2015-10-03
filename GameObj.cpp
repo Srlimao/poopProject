@@ -45,7 +45,7 @@ void GameObj::left(int screenWidth, int screenHeight){
 	}
 }
 
-void GameObj::righty(int screenWidth, int screenHeight) {
+void GameObj::right(int screenWidth, int screenHeight) {
 	if (posX < screenWidth - 5 - this->getSprite()->getImage(imgPosCounter)->getWidth()) {
 		posX = posX + 5;
 		if (imgPosCounter = 8 || imgPosCounter != 9)

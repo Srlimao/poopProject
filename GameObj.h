@@ -29,7 +29,7 @@ public:
 
 	void idle();
 	void left(int screenWidth, int screenHeight);
-	void righty(int screenWidth, int screenHeight);
+	void right(int screenWidth, int screenHeight);
 	void up(int screenWidth, int screenHeight);
 	void down(int screenWidth, int screenHeight);
 
