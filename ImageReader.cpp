@@ -86,7 +86,7 @@ Image* ImageReader::subImage(int width, int height, Image* image, int posx, int 
 	
 
 	for (int x = xx; x < width && x < image->getWidth(); x++) {			//changed || to &&
-		for (int y = yy; y < height && y < image->getHeight(); y++) {	//changed || to &&
+		for (int y = yy; posy + y < height && y < image->getHeight(); y++) {	//changed || to &&
 			im->setRGB(posx + x, posy + y ,image->getRGB(x, y));
 		}
 	}

@@ -14,8 +14,19 @@ Layer::Layer(Image* image)
 	this->taxaY = 1;
 	this->posX = 0;
 	this->posY = 0;
+	this->cursorY = 0;
 }
 
+Layer::Layer(Image* image, float taxaX, float taxaY)
+{
+	this->image = image;
+	this->status = true;
+	this->taxaX = taxaX;
+	this->taxaY = taxaY;
+	this->posX = 0;
+	this->posY = 0;
+	this->cursorY = 0;
+}
 Layer::~Layer(void)
 {
 }
@@ -63,4 +74,9 @@ int Layer::getTaxaY()
 int Layer::getCursorY()
 {
 	return cursorY;
+}
+
+void Layer::setCursorY(int y) {
+	//this->cursorY = y;
+	this->cursorY += y;
 }

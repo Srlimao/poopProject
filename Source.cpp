@@ -3,16 +3,19 @@
 #include <GL\GLU.h>
 #include <GL\glut.h>
 
-#include <iostream>	//nothing to do with gl, but to write things on the console.	
-#include <time.h>	//for randoms
-#include "Image.h"
-#include "Sprite.h"
+#include "FX.h"
 #include "GameObj.h"
-#include <vector>
-#include <string>
+#include "Image.h"
 #include "ImageReader.h"
+#include "Sprite.h"
+
 #include <fstream>
+#include <iostream>		//nothing to do with gl, but to write things on the console.	
 #include <regex>
+#include <string>
+#include <time.h>		//for randoms
+#include <vector>
+
 
 
 
@@ -28,10 +31,12 @@ void ChangeSize(int w, int h);
 void RenderScene();
 void plotImage(Image *overImage);
 void plotAll();
+void plotLayer(Layer *overlayer);
 
 void keyboard(unsigned char key, int x, int y);		//call GameObj move methods
+void SpecialInput(int key, int x, int y);
 void mouse(int button, int state, int x, int y);	//call GameObj shoot methods (sfx) and main events.	
-
+void bgEvent(int a);
 void write(string msg, int x, int y);
 
 
@@ -52,7 +57,7 @@ Sprite * shipdown;
 Sprite * effects;
 
 Image *viewportStatic;
-//FX * fx;
+FX * fx;
 
 
 /*
@@ -108,20 +113,34 @@ void loadObjects() {
 	imageReader = new ImageReader();
 
 	vector<Image*> toLoad;
-	toLoad.push_back(imageReader->loadImageFile("E:\\poopProject\\Sprites\\Shipup.ptm"));
+	toLoad.push_back(imageReader->loadImageFile("E:\\poopProject\\Sprites\\Idle1.ptm"));
+	toLoad.push_back(imageReader->loadImageFile("E:\\poopProject\\Sprites\\Idle2.ptm"));
+	toLoad.push_back(imageReader->loadImageFile("E:\\poopProject\\Sprites\\speedUp1.ptm"));
+	toLoad.push_back(imageReader->loadImageFile("E:\\poopProject\\Sprites\\speedUp2.ptm"));
+	toLoad.push_back(imageReader->loadImageFile("E:\\poopProject\\Sprites\\break1.ptm"));
+	toLoad.push_back(imageReader->loadImageFile("E:\\poopProject\\Sprites\\break2.ptm"));
+	toLoad.push_back(imageReader->loadImageFile("E:\\poopProject\\Sprites\\left1.ptm"));
+	toLoad.push_back(imageReader->loadImageFile("E:\\poopProject\\Sprites\\left2.ptm"));
+	toLoad.push_back(imageReader->loadImageFile("E:\\poopProject\\Sprites\\right1.ptm"));
+	toLoad.push_back(imageReader->loadImageFile("E:\\poopProject\\Sprites\\right2.ptm"));
+	toLoad.push_back(imageReader->loadImageFile("E:\\poopProject\\Sprites\\break1.ptm"));//mudar pra destruir
+	toLoad.push_back(imageReader->loadImageFile("E:\\poopProject\\Sprites\\break2.ptm"));//mudar para destruir
 	shipup = new Sprite(toLoad);
 
 
 	viewportStatic = new Image(width, height);
 	sceneLayers.push_back(new Layer(imageReader->loadImageFile("E:\\poopProject\\Sprites\\SpaceBG.ptm")));
+	sceneLayers.push_back(new Layer(imageReader->loadImageFile("E:\\poopProject\\Sprites\\layerRocks.ptm")));
 	sceneObjects.push_back(new GameObj(0, 0, shipup));
 
-
-	//INNERS
-	//	criar objects, criar sprites, criar imagens
-	//	criar layers, criar imagens
-
 	//fx = new FX( //criar nova sprite e criar nova image.)
+
+	vector<Image*> toLoad2;
+	toLoad2.push_back(imageReader->loadImageFile("E:\\poopProject\\Sprites\\Shipup.ptm"));
+	toLoad2.push_back(imageReader->loadImageFile("E:\\poopProject\\Sprites\\Shipup.ptm"));
+	toLoad2.push_back(imageReader->loadImageFile("E:\\poopProject\\Sprites\\Shipup.ptm"));
+	toLoad2.push_back(imageReader->loadImageFile("E:\\poopProject\\Sprites\\Shipup.ptm"));
+	fx = new FX(new Sprite(toLoad2));
 }
 	
 
@@ -134,30 +153,41 @@ void write(string msg, int x, int y) {	//Chamada GLUT para escrita
 }
 
 
-void plotAll(){
+void plotAll() {
 	Image *temp;
-	for (int i = 0; i < sceneLayers.size(); i++){
+	for (int i = 0; i < sceneLayers.size(); i++) {
 		if (sceneLayers[i]->isActive())
 		{
-			temp = imageReader->subImage(width, height, sceneLayers[i]->getImage(), sceneLayers[i]->getPosX(), sceneLayers[i]->getPosY());
-			plotImage(temp);
+
+			//temp = imageReader->subImage(width, height, sceneLayers[i]->getImage(), sceneLayers[i]->getPosX(), sceneLayers[i]->getPosY());
+			plotLayer(sceneLayers[i]);
 		}
-		
+
 	}
 	for (int i = 0; i < sceneObjects.size(); i++)
 	{
-		if (sceneObjects[i]->isActive()){
-			int objY = sceneObjects[i]->getY();
-			int objX = sceneObjects[i]->getX();
+		if (sceneObjects[i]->isActive()) {
 			Sprite * sprite01 = sceneObjects[i]->getSprite();
 			Image * sprImage01 = sprite01->getImage(sceneObjects[i]->getPos());
 
-			temp = imageReader->subImage(width, height, sprImage01, objX, objY);
+			temp = imageReader->subImage(width, height, sprImage01, sceneObjects[i]->getX(), sceneObjects[i]->getY());
 
 			plotImage(temp);
-
+			delete temp;
 		}
 	}
+
+	if (fx->isActivee()) {
+		temp = imageReader->subImage(width, height, fx->getSprite()->getImage(fx->getPosCounter()), fx->getX(), fx->getY());
+		plotImage(temp);
+		delete temp;
+
+		temp = imageReader->subImage(width, height, fx->getSprite()->getImage(fx->getPosCounter2()), sceneObjects[0]->getX(), sceneObjects[0]->getY());
+		plotImage(temp);
+		delete temp;
+
+	}
+
 
 	//if(gamestate==0)...
 	//if(h pressed only state==1)...	
@@ -183,11 +213,12 @@ void plotImage(Image * overImage){
 			if (alphaOver == 255) {
 				viewportStatic->setRGB(x, y, rgbOver);
 			}
-			else if (alphaOver == 0) continue;
+			else if (alphaOver == 0) continue;		//TODO else calcular alpha
 
 		}
 	}
 }
+
 
 
 void plotLayer(Layer * overLayer) {
@@ -198,9 +229,9 @@ void plotLayer(Layer * overLayer) {
 	int alphaOver = 0;
 	int a = 0;
 
-	for (int x = 0; x < sizeof(width); x++)
+	for (int x = 0; x < width && x <overLayer->getImage()->getWidth(); x++)
 	{
-		for (int y = 0; y < sizeof(height); y++)
+		for (int y = 0; y < height && x < overLayer->getImage()->getHeight(); y++)
 		{
 			if (y + overLayer->getCursorY() < overLayer->getImage()->getHeight()) {
 				rgbOver = overLayer->getImage()->getRGB(x, (y + overLayer->getCursorY()));
@@ -214,8 +245,12 @@ void plotLayer(Layer * overLayer) {
 				else if (alphaOver == 0) continue;
 			}
 			else {
-				rgbOver = overLayer->getImage()->getRGB(x, a);
-				a++;
+				if (a < overLayer->getImage()->getHeight()) {
+					rgbOver = overLayer->getImage()->getRGB(x, a);
+					a++;
+				}
+				else a = 0;
+				
 				blueOver = rgbOver & 255;
 				greenOver = (rgbOver >> 8) & 255;
 				redOver = (rgbOver >> 16) & 255;
@@ -230,8 +265,9 @@ void plotLayer(Layer * overLayer) {
 }
 
 
+
 void drawImage() {	
-	glRasterPos2i(0, 0);	//these 2 methods set the start position to draw...
+	glRasterPos2i(0,0);	//these 2 methods set the start position to draw...
 	glDrawPixels(width, height, GL_RGBA, GL_UNSIGNED_BYTE, viewportStatic->getPixels());
 }
 
@@ -266,7 +302,10 @@ void init() {
 	glutDisplayFunc(RenderScene);
 	glutReshapeFunc(ChangeSize);
 	glutKeyboardFunc(keyboard);
+	glutSpecialFunc(SpecialInput);
 	glutMouseFunc(mouse);
+
+	glutTimerFunc(1000 / 60, bgEvent, 100);
 
 	glMatrixMode(GL_MODELVIEW);			//change back mode to objects views
 }
@@ -275,98 +314,114 @@ void init() {
 //EVENT METHODS
 //-------------
 
+void bgEvent(int a) {
+	for each(Layer * layer in sceneLayers) {
+		int cursorY = a * layer->getTaxaY();
+		layer->setCursorY(cursorY);
+		cout << layer->getCursorY() << endl;
+	}
 
-//DO EVENT BACKGROUND GOING HERE. a ideia eh com timer sempre mover o background em velocidade definida da layer. (apenas uma dimensao, a outra eh no movimento do char),
-//movimento infinito! how?
+	//sceneLayers[0]->setCursorY(a / 100);
+	glutPostRedisplay();
+	//1000.0 / 60.0
+	glutTimerFunc(1000 / 60, bgEvent, 100);
+
+}
 
 
 //TODO DO METHOD CALL CHANGESTAT(), on it change to active objects and global variable, allowing control of the spaceship.
 // at game logic up top^ (change gamestats)
 
-void mouse(int button, int state, int x, int y) {	//what happens on mouse clicks
+void mouse(int button, int state, int x, int y) {
 
 	int yyy = height - y;
-	
-	//a click :		
-	if(button == GLUT_LEFT_BUTTON && state == GLUT_DOWN){
+
+	if (button == GLUT_LEFT_BUTTON && state == GLUT_DOWN) {
 		//test output on console:
 		cout << "Mouse Click:" << endl;
 		cout << "\tPosition: " << x << " - " << y << endl;
-		
-		/*
-		if(GameState == 1){
-			//fx.shoot(x, y);
-			for (int i = 0; i < sceneObjects.size(); i++)
-				if(x > sceneObjects[i]->getX() && x < sceneObjects[i]->getX() + sceneObjects[i]->getSprite()->getImage((sceneObjects[i]->getPos())).getWidth())
-					sceneObjects[i].hit();
+
+
+		//if(GameState == 1){
+		fx->shoot(x, yyy);
+
+		int a = 5;
+
+
+		for (int i = 0; i < sceneObjects.size(); i++) {
+			int b = 5;
+			if (x > sceneObjects[i]->getX() &&
+				x <
+				(
+					sceneObjects[i]->getX()
+					+ sceneObjects[i]->getSprite()->getImage(sceneObjects[i]->getPos())->getWidth()
+					)
+				)
+			{
+				b = 6;
+				if (y > sceneObjects[i]->getY() &&
+					y <
+					(
+						sceneObjects[i]->getY()
+						+ sceneObjects[i]->getSprite()->getImage(sceneObjects[i]->getPos())->getHeight())
+					)
+				{
+					b = 7;
+					sceneObjects[i]->hit();
+				}
+			}
 		}
-		*/
+
+		//}
+
 	}
 
 	glutPostRedisplay();	//recall display event
 }
 
 
+
+void SpecialInput(int key, int x, int y)
+{
+	switch (key)
+	{
+	case GLUT_KEY_UP:
+		sceneObjects[0]->up(width, height);
+		break;
+	case GLUT_KEY_DOWN:
+		sceneObjects[0]->down(width, height);
+		break;
+	case GLUT_KEY_LEFT:
+		sceneObjects[0]->left(width, height);
+		break;
+	case GLUT_KEY_RIGHT:
+		sceneObjects[0]->right(width, height);
+		break;
+	}
+
+	glutPostRedisplay();
+}
+
 void keyboard(unsigned char key, int x, int y) {	//what happens on keyboard presses
 	int w, h;
-
+	std::cout << key << endl;
 	switch (key){
 
 	case 'q':		//quit
 		exit(0);
 		break;
-		/*
-	case 's':		//stop drawing
-		state = 0;
-		toDraw[0]->setVisibility(false);
-		toDraw[1]->setVisibility(false);
-		cout << state << endl;
+	case 'w':
+		sceneObjects[0]->up(width,height);
 		break;
-
-	case 'd':		//set state to draw 
-		toDraw[0]->setVisibility(true);
-		state = 1;
-		cout << state << endl;
+	case 'a':
+		sceneObjects[0]->left(width, height);
 		break;
-	case 'f':
-		toDraw[1]->setVisibility(true);
-		state = 2;
-		cout << state << endl;
+	case 's':
+		sceneObjects[0]->down(width, height);
 		break;
-	case 'r':		//create random image for image1 100x100
-		toDraw[0]->setImage(randomImage(100, 100, toDraw[0]->getImage()));
+	case 'd':
+		sceneObjects[0]->right(width, height);
 		break;
-	case 'e':		//create random image for image1 100x100
-		toDraw[1]->setImage(randomImage(100, 100, toDraw[1]->getImage()));	//FIX GET POS
-		break;
-	case 't':		//create random image on pos1 passing sizes
-		cout << "Enter a Width value: ";
-		cin >> w;
-		cout << endl << "Enter a Height value: ";
-		cin >> h;
-		toDraw[0]->setImage(randomImage(w, h, toDraw[0]->getImage()));	//FIX GET POS	
-		break;
-	case 'y':		//create random image on pos2 passing sizes
-		cout << "Enter a Width value: ";
-		cin >> w;
-		cout << endl << "Enter a Height value: ";
-		cin >> h;
-		toDraw[1]->setImage(randomImage(w, h, toDraw[1]->getImage()));	//FIX GET POS	
-		break;
-		//discover how are the directions.	
-	case 'j':
-		toDraw[0]->left();
-		break;
-	case 'l':
-		toDraw[0]->right();
-		break;
-	case 'i':
-		toDraw[0]->up();
-		break;
-	case 'k':
-		toDraw[0]->down();
-		break;
-	*/
 	}
 	
 	glutPostRedisplay();
@@ -384,13 +439,11 @@ void RenderScene(void) {							//scene render pipeline state
 
 
 void ChangeSize(int w, int h) {						//redimensioning window
-	/*
+	
 	//prevent invalid size error.
 	if (h == 0)
 		h = 1;
 
-	width = w;
-	height = h;
 
 	glMatrixMode(GL_PROJECTION);				//change mode to control view
 	//glViewport(width, height, width + w, height + h);
@@ -401,7 +454,7 @@ void ChangeSize(int w, int h) {						//redimensioning window
 	gluOrtho2D(0, w, 0, h);
 	glMatrixMode(GL_MODELVIEW);					//change back mode to objects views
 	glLoadIdentity();
-	*/
+	
 }	
 
 

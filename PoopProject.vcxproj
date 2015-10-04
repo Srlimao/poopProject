@@ -20,12 +20,14 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GameObj.h" />
+    <ClInclude Include="FX.h" />
     <ClInclude Include="Image.h" />
     <ClInclude Include="ImageReader.h" />
     <ClInclude Include="Layer.h" />
     <ClInclude Include="Sprite.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="FX.cpp" />
     <ClCompile Include="GameObj.cpp" />
     <ClCompile Include="Image.cpp" />
     <ClCompile Include="ImageReader.cpp" />

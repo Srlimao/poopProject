@@ -18,6 +18,7 @@ private:
 
 public:
 	Layer(Image* image);
+	Layer(Image* image, float taxaX, float taxaY);
 	~Layer(void);
 
 	bool isActive();
@@ -26,6 +27,7 @@ public:
 	int getPosY();
 	void setPosX(int posX);
 	void setPosY(int posY);
+	void setCursorY(int y);
 	int getTaxaX();
 	int getTaxaY();
 	int getCursorY();
