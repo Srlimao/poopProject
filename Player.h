@@ -5,11 +5,11 @@ enum STATE {
 	MOVING_FRONT,
 	MOVING_FRONT_RIGHT,
 	MOVING_RIGHT,
-	MOVING_BOTTOM_RIGHT,
-	MOVING_BOTTOM,
-	MOVING_BOTTOM_LEFT,
+	MOVING_BACK_RIGHT,
+	MOVING_BACK,
+	MOVING_BACK_LEFT,
 	MOVING_LEFT,
-	MOVING_TOP_LEFT
+	MOVING_FRONT_LEFT
 };
 
 class Player :
@@ -20,7 +20,9 @@ protected:
 
 public:
 	//GameObj(int posX, int posY, Sprite * sprites);
+	void setState(int state);
 	void update();
+	void checkCollision(vector<GameObj*> objects);
 
 	Player(int posX, int posY, Sprite * sprites);
 	~Player();

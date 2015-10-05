@@ -23,7 +23,11 @@ public:
 	void setActive(boolean b);
 
 
-	void update();
+	virtual void update() = 0;
+	bool testHit(int x, int y, GameObj * obj);
+	bool testHit(GameObj * obj);
+	
+	int getHp();
 
 	//moves
 	void shoot(int x, int y);						//TODO: check ammo, reload.	
@@ -31,10 +35,11 @@ public:
 	void destroy();
 
 	void idle();
-	void left(int screenWidth, int screenHeight);
-	void right(int screenWidth, int screenHeight);
-	void up(int screenWidth, int screenHeight);
-	void down(int screenWidth, int screenHeight);
+	void left();
+	void right();
+	void up(); 
+	void down();
+	void setHp(int hp);
 
 	GameObj(int posX, int posY, Sprite * sprites);
 	~GameObj(void);

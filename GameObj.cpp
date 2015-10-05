@@ -3,27 +3,56 @@
 #include  <iostream>
 
 
+bool GameObj::testHit(int x, int y, GameObj * obj)
+{
+	if (x >= obj->getX() && x <= obj->getX() + obj->getSprite()->getImage(0)->getWidth())
+		if (y >= obj->getY() && y <= obj->getY() + obj->getSprite()->getImage(0)->getHeight())
+			return true;
+	return false;
+}
+
+bool GameObj::testHit(GameObj * obj)
+{
+	bool p1 = testHit(this->posX, this->posY, obj);
+	bool p2 = testHit(this->posX,
+						this->posY + this->getSprite()->getImage(0)->getHeight(), obj);
+	bool p3 = testHit(this->posX + this->getSprite()->getImage(0)->getWidth(),
+						this->posY + getSprite()->getImage(0)->getHeight(), obj);
+	bool p4 = testHit(this->posX + this->getSprite()->getImage(0)->getWidth(),
+						this->posY, obj);
+
+	return p1 || p2 || p3 || p4;
+		// NAO TESTA PIXEL :v
+}
+
+int GameObj::getHp()
+{
+	return hp;
+}
+
 void GameObj::shoot(int x, int y)
 {
 }
 
 void GameObj::hit()
 {
-	if (hp > 10) {
+	if (hp > 0) {
 		hp--;
-		frame = 12;
+		//frame = 12;
 	}
-	else
+	
+	if(hp <= 0)
 		destroy();
 }
 
 void GameObj::destroy() {
+	active = false;
 	if (destroyState < 5) {
-		frame = 10;
+		//frame = 10;
 		destroyState++;
 	}
 	else if (destroyState < 10) {
-		frame = 11;
+		//frame = 11;
 	}
 	else {
 		active = false;
@@ -37,7 +66,7 @@ void GameObj::idle() {
 		frame = 1;
 }
 
-void GameObj::left(int screenWidth, int screenHeight) {
+void GameObj::left() {
 	if (posX > 5) {
 		posX = posX - 5;
 		if (frame != 6 || frame != 7)
@@ -47,22 +76,22 @@ void GameObj::left(int screenWidth, int screenHeight) {
 	}
 }
 
-void GameObj::right(int screenWidth, int screenHeight)
+void GameObj::right()
 {
-	if (posX < screenWidth - 5 - this->getSprite()->getImage(frame)->getWidth()) {
+	if (posX < 500 - 5 - this->getSprite()->getImage(frame)->getWidth()) {
 		posX = posX + 5;
-		std::cout << frame;
+		//std::cout << frame;
 		if (frame != 8 || frame != 9)
 			frame = 8;
 		else
 			frame = 9;
-		std::cout << frame << endl;
+		//std::cout << frame << endl;
 	}
 }
 
 
-void GameObj::up(int screenWidth, int screenHeight) {
-	if (posY + this->getSprite()->getImage(frame)->getHeight() + 5 < screenHeight) {
+void GameObj::up() {
+	if (posY + this->getSprite()->getImage(frame)->getHeight() + 5 < 500) {
 		posY = posY + 5;
 		if (frame != 2)
 			frame = 2;
@@ -71,18 +100,23 @@ void GameObj::up(int screenWidth, int screenHeight) {
 	}
 }
 
-void GameObj::down(int screenWidth, int screenHeight) {
+void GameObj::down() {
 	if (posY > 5) {
 		posY = posY - 5;
-		std::cout << frame;
+		//std::cout << frame;
 
 		if (frame != 4)
 			frame = 4;
 		else
 			frame = 5;
 
-		std::cout << frame << endl;
+		//std::cout << frame << endl;
 	}
+}
+
+void GameObj::setHp(int hp)
+{
+	this->hp = hp;
 }
 
 
@@ -102,9 +136,7 @@ boolean GameObj::isActive() { return active; }
 
 void GameObj::setActive(boolean b) { active = b; }
 
-void GameObj::update()
-{
-}
+
 
 void GameObj::setFrame(int pos) { frame = pos; }
 

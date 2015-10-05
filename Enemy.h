@@ -20,7 +20,9 @@ protected:
 public:
 	void update();
 
-	Enemy(int posX, int posY, Sprite * sprites);
+	Enemy(int posX, int posY, Sprite * sprites, GameObj * target, int speed, int hp);
+	Enemy(int posX, int posY, Sprite * sprites, GameObj * target, int speed);
+	Enemy(int posX, int posY, Sprite * sprites, GameObj * target);
 	~Enemy();
 };
 
