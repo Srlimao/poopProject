@@ -5,13 +5,13 @@ void FX::shoot(int x, int y)
 	this->posX = x;
 	this->posY = y;
 	this->isActive = true;
-	imgPosCounter = 0;
+	frame = 0;
 	imgPosCounter2 = 2;
 }
 
 void FX::fade()
 {
-	imgPosCounter = 1;
+	frame = 1;
 	imgPosCounter2 = 3;
 }
 
@@ -26,9 +26,9 @@ bool FX::isActivee()
 	return isActive;
 }
 
-int FX::getPosCounter()
+int FX::getFrame()
 {
-	return imgPosCounter;
+	return frame;
 }
 
 int FX::getPosCounter2()

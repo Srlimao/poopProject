@@ -10,11 +10,11 @@
 class Layer
 {
 private:
-	int taxaX, taxaY;	//Taxa de movimento da camada, controlado pela camada mais alta
+	float taxaX, taxaY;	//Taxa de movimento da camada, controlado pela camada mais alta
 	int posX, posY;		//Posição pra alguma coisa? 
 	Image * image;		//Imagem
 	bool status;
-	int cursorY;
+	float cursorY;
 
 public:
 	Layer(Image* image);
@@ -27,9 +27,9 @@ public:
 	int getPosY();
 	void setPosX(int posX);
 	void setPosY(int posY);
-	void setCursorY(int y);
-	int getTaxaX();
-	int getTaxaY();
-	int getCursorY();
+	void setCursorY(float y);
+	float getTaxaX();
+	float getTaxaY();
+	float getCursorY();
 
 };

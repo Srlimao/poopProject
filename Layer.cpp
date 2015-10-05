@@ -61,22 +61,22 @@ void Layer::setPosY(int posY)
 	this->posY = posY;
 }
 
-int Layer::getTaxaX()
+float Layer::getTaxaX()
 {
 	return taxaX;
 }
 
-int Layer::getTaxaY()
+float Layer::getTaxaY()
 {
 	return taxaY;
 }
 
-int Layer::getCursorY()
+float Layer::getCursorY()
 {
 	return cursorY;
 }
 
-void Layer::setCursorY(int y) {
+void Layer::setCursorY(float y) {
 	//this->cursorY = y;
-	this->cursorY += y;
+	this->cursorY = y;
 }

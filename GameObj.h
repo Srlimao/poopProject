@@ -2,9 +2,9 @@
 #include "Sprite.h"
 
 class GameObj {
-private:
+protected:
 	Sprite * sprites;
-	int imgPosCounter;
+	int frame;
 	int posX;
 	int posY;
 	boolean active;
@@ -17,10 +17,13 @@ public:
 	int getY();
 	void setPos(int x, int y);
 	int getPos();
-	void settingPosCounter(int pos);
+	void setFrame(int pos);
 	Sprite* getSprite();
 	boolean isActive();
 	void setActive(boolean b);
+
+
+	void update();
 
 	//moves
 	void shoot(int x, int y);						//TODO: check ammo, reload.	

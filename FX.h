@@ -7,7 +7,7 @@ private:
 	int posX;
 	int posY;
 	bool isActive;
-	int imgPosCounter;
+	int frame;
 	int imgPosCounter2;	//for own spaceship effects
 public:
 	void FX::shoot(int x, int y);
@@ -15,7 +15,7 @@ public:
 	void fade();
 
 	bool isActivee();
-	int getPosCounter();
+	int getFrame();
 	int getPosCounter2();
 	int getY();
 	int getX();

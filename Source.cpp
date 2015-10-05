@@ -3,10 +3,12 @@
 #include <GL\GLU.h>
 #include <GL\glut.h>
 
+#include "Enemy.h"
 #include "FX.h"
 #include "GameObj.h"
 #include "Image.h"
 #include "ImageReader.h"
+#include "Player.h"
 #include "Sprite.h"
 
 #include <fstream>
@@ -129,9 +131,11 @@ void loadObjects() {
 
 
 	viewportStatic = new Image(width, height);
-	sceneLayers.push_back(new Layer(imageReader->loadImageFile("E:\\poopProject\\Sprites\\SpaceBG.ptm")));
-	sceneLayers.push_back(new Layer(imageReader->loadImageFile("E:\\poopProject\\Sprites\\layerRocks.ptm")));
-	sceneObjects.push_back(new GameObj(0, 0, shipup));
+	sceneLayers.push_back(new Layer(imageReader->loadImageFile("E:\\poopProject\\Sprites\\spaaace.ptm"),0.05,0.05));
+	sceneLayers.push_back(new Layer(imageReader->loadImageFile("E:\\poopProject\\Sprites\\layerRocks.ptm"),0.10,0.10));
+	sceneObjects.push_back(new GameObj(width/2, 20, shipup)); //new Player=>   state = STATE::MOVING_RIGHT (teclado)... sceneObject[i].Update() { switch STATE } 
+
+	//sceneObjects.push_back(new GameObj(width / 2, 20, shipup)); //new Enemy   behavior = BEHAVIOR::follow  sceneObject[i].Update() { switch behavior - faz tal coisa } 
 
 	//fx = new FX( //criar nova sprite e criar nova image.)
 
@@ -178,7 +182,7 @@ void plotAll() {
 	}
 
 	if (fx->isActivee()) {
-		temp = imageReader->subImage(width, height, fx->getSprite()->getImage(fx->getPosCounter()), fx->getX(), fx->getY());
+		temp = imageReader->subImage(width, height, fx->getSprite()->getImage(fx->getFrame()), fx->getX(), fx->getY());
 		plotImage(temp);
 		delete temp;
 
@@ -229,6 +233,9 @@ void plotLayer(Layer * overLayer) {
 	int alphaOver = 0;
 	int a = 0;
 
+	if (overLayer->getCursorY() >= overLayer->getImage()->getHeight()) {
+		overLayer->setCursorY(overLayer->getCursorY() - overLayer->getImage()->getHeight());
+	}
 	for (int x = 0; x < width && x <overLayer->getImage()->getWidth(); x++)
 	{
 		for (int y = 0; y < height && x < overLayer->getImage()->getHeight(); y++)
@@ -245,12 +252,17 @@ void plotLayer(Layer * overLayer) {
 				else if (alphaOver == 0) continue;
 			}
 			else {
-				if (a < overLayer->getImage()->getHeight()) {
-					rgbOver = overLayer->getImage()->getRGB(x, a);
-					a++;
-				}
-				else a = 0;
-				
+				//if (a < overLayer->getImage()->getHeight()) {
+				//	rgbOver = overLayer->getImage()->getRGB(x, a);
+				//	a++;
+				//}
+				//else {
+				//	a = 0;
+				//	rgbOver = overLayer->getImage()->getRGB(x, a);
+				//}
+				a = y + overLayer->getCursorY() - overLayer->getImage()->getHeight();
+				rgbOver = overLayer->getImage()->getRGB(x, a);
+
 				blueOver = rgbOver & 255;
 				greenOver = (rgbOver >> 8) & 255;
 				redOver = (rgbOver >> 16) & 255;
@@ -261,10 +273,9 @@ void plotLayer(Layer * overLayer) {
 				else if (alphaOver == 0) continue;
 			}
 		}
+		
 	}
 }
-
-
 
 void drawImage() {	
 	glRasterPos2i(0,0);	//these 2 methods set the start position to draw...
@@ -305,7 +316,7 @@ void init() {
 	glutSpecialFunc(SpecialInput);
 	glutMouseFunc(mouse);
 
-	glutTimerFunc(1000 / 60, bgEvent, 100);
+	glutTimerFunc(1000/60, bgEvent, 100);
 
 	glMatrixMode(GL_MODELVIEW);			//change back mode to objects views
 }
@@ -315,16 +326,21 @@ void init() {
 //-------------
 
 void bgEvent(int a) {
+
 	for each(Layer * layer in sceneLayers) {
-		int cursorY = a * layer->getTaxaY();
-		layer->setCursorY(cursorY);
-		cout << layer->getCursorY() << endl;
+		float cursorY = a * layer->getTaxaY();
+		layer->setCursorY(layer->getCursorY() + cursorY);
+		//cout << layer->getCursorY() << endl;
+	}
+
+	for each(GameObj * gameObj in sceneObjects) {
+		gameObj->update();
 	}
 
 	//sceneLayers[0]->setCursorY(a / 100);
 	glutPostRedisplay();
 	//1000.0 / 60.0
-	glutTimerFunc(1000 / 60, bgEvent, 100);
+	glutTimerFunc(1000/60, bgEvent, 100);
 
 }
 
@@ -402,15 +418,19 @@ void SpecialInput(int key, int x, int y)
 	glutPostRedisplay();
 }
 
+
+
+
 void keyboard(unsigned char key, int x, int y) {	//what happens on keyboard presses
 	int w, h;
-	std::cout << key << endl;
+	//Player * player = sceneObjects[0];
 	switch (key){
 
 	case 'q':		//quit
 		exit(0);
 		break;
 	case 'w':
+		//player->setState(STATE::MOVING_UP);
 		sceneObjects[0]->up(width,height);
 		break;
 	case 'a':
@@ -455,108 +475,4 @@ void ChangeSize(int w, int h) {						//redimensioning window
 	glMatrixMode(GL_MODELVIEW);					//change back mode to objects views
 	glLoadIdentity();
 	
-}	
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-/*	-------------------------------------------------------------------------------------------------------------
-
-
-state machine! ,the drawings can be here or at another methods,
-only flush and the sub method calls that contain the begin should be here.
-
-glColor3f(0.0, 0.0, 1.0);		//i whould make to 0 to 255; f 0.0 to 1.0
-glBegin()						//Draw a shape, types : GL_TRIANGLES, GL_FAN, GL_LINE_LOOP, GL_QUADS, GL_POLYGON, STRIPS...
-glVertex3f(  ,  ,  );			//f , i or v  for types
-glVertex3f(  ,  ,  );
-glVertex3f(  ,  ,  );
-glEnd()
-
-other possible other than color:  glNormal*(), glMaterial*(), glLight*()
-
-*/
-
-
-/*
-Drawing a circle
-
-#define PI 3.1415926535898
-GLfloat circle_points = 100.0f;
-GLfloat angle, raioX = 1.0f, raioY = 1.0f;			//size
-glBegin(GL_LINE_LOOP);
-for (int i = 0; i < circle_points; i++) {
-angle = 2 * PI*i / circle_points;
-glVertex2f(cos(angle)*raioX,
-sin(angle)*raioY);
 }
-glEnd();
-*/
-
-
-
-
-
-
-
-
-
-
-
-
-/*
-
-
-
-
-glPolygonMode(<lado>, <modo>)
-!<lado>
-• GL_FRONT_AND_BACK
-• GL_FRONT
-• GL_BACK
-!<modo>
-• GL_POINT
-• GL_LINE
-• GL_FILL
-
-
-
-
-
-
-glEnable(GL_LIGHTING);
-
-
-
-glFrustum(left, right, bottom, top, near, far)
-!glOrtho(left, right, bottom, top, near, far)
-!gluPerspective(fovy, aspect, zNear, zFar)
-!gluOrtho2D(left, right, bottom, top)
-!gluLookAt(eyex, eyey, eyez, centerx,
-	centery, centerz, upx, upy, upz)
-	Coordenadas de Tela
-	!glViewport(x, y, width, height)
-
-
-
-
-	• glTranslate {
-	fd
-}(x, y, z)
-• glRotate {
-		fd) (angle, x, y, z)
-			• glScale{ fd }(x, y, z)
-
-
-*/

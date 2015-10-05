@@ -11,7 +11,7 @@ void GameObj::hit()
 {
 	if (hp > 10) {
 		hp--;
-		imgPosCounter = 12;
+		frame = 12;
 	}
 	else
 		destroy();
@@ -19,11 +19,11 @@ void GameObj::hit()
 
 void GameObj::destroy() {
 	if (destroyState < 5) {
-		imgPosCounter = 10;
+		frame = 10;
 		destroyState++;
 	}
 	else if (destroyState < 10) {
-		imgPosCounter = 11;
+		frame = 11;
 	}
 	else {
 		active = false;
@@ -31,57 +31,57 @@ void GameObj::destroy() {
 }
 
 void GameObj::idle() {
-	if (imgPosCounter != 0)
-		imgPosCounter = 0;
+	if (frame != 0)
+		frame = 0;
 	else
-		imgPosCounter = 1;
+		frame = 1;
 }
 
 void GameObj::left(int screenWidth, int screenHeight) {
 	if (posX > 5) {
 		posX = posX - 5;
-		if (imgPosCounter != 6 || imgPosCounter != 7)
-			imgPosCounter = 6;
+		if (frame != 6 || frame != 7)
+			frame = 6;
 		else
-			imgPosCounter = 7;
+			frame = 7;
 	}
 }
 
 void GameObj::right(int screenWidth, int screenHeight)
 {
-	if (posX < screenWidth - 5 - this->getSprite()->getImage(imgPosCounter)->getWidth()) {
+	if (posX < screenWidth - 5 - this->getSprite()->getImage(frame)->getWidth()) {
 		posX = posX + 5;
-		std::cout << imgPosCounter;
-		if (imgPosCounter != 8 || imgPosCounter != 9)
-			imgPosCounter = 8;
+		std::cout << frame;
+		if (frame != 8 || frame != 9)
+			frame = 8;
 		else
-			imgPosCounter = 9;
-		std::cout << imgPosCounter << endl;
+			frame = 9;
+		std::cout << frame << endl;
 	}
 }
 
 
 void GameObj::up(int screenWidth, int screenHeight) {
-	if (posY + this->getSprite()->getImage(imgPosCounter)->getHeight() + 5 < screenHeight) {
+	if (posY + this->getSprite()->getImage(frame)->getHeight() + 5 < screenHeight) {
 		posY = posY + 5;
-		if (imgPosCounter != 2)
-			imgPosCounter = 2;
+		if (frame != 2)
+			frame = 2;
 		else
-			imgPosCounter = 3;
+			frame = 3;
 	}
 }
 
 void GameObj::down(int screenWidth, int screenHeight) {
 	if (posY > 5) {
 		posY = posY - 5;
-		std::cout << imgPosCounter;
+		std::cout << frame;
 
-		if (imgPosCounter != 4)
-			imgPosCounter = 4;
+		if (frame != 4)
+			frame = 4;
 		else
-			imgPosCounter = 5;
+			frame = 5;
 
-		std::cout << imgPosCounter << endl;
+		std::cout << frame << endl;
 	}
 }
 
@@ -102,9 +102,13 @@ boolean GameObj::isActive() { return active; }
 
 void GameObj::setActive(boolean b) { active = b; }
 
-void GameObj::settingPosCounter(int pos) { imgPosCounter = pos; }
+void GameObj::update()
+{
+}
 
-int GameObj::getPos() { return imgPosCounter; }
+void GameObj::setFrame(int pos) { frame = pos; }
+
+int GameObj::getPos() { return frame; }
 
 
 
